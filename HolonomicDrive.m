@@ -104,5 +104,19 @@ classdef HolonomicDrive < SecondOrderSystem
 			
 			obj = HolonomicDrive(wheels, 1, 1);
 		end
+		
+		function runTest()
+			plant = HolonomicDrive.defaultInstance();
+			v = HolonomicDriveVisualizer(plant);
+			
+			
+			u0 = Point(plant.getInputFrame, [1; -0.5; 0]);
+			
+			sys = cascade(ConstantTrajectory(u0), plant);
+			
+			xtraj = simulate(sys, [0 10]);
+			
+			v.playback(xtraj, struct('slider', true));
+		end
 	end
 end
