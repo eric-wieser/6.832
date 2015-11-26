@@ -80,6 +80,9 @@ classdef HolonomicDrive < SecondOrderSystem
 					         - wheel.pos(2) * f(1);
 			end
 			
+			% convert force to world space
+			total_force = rotation * total_force;
+			
 			qdd = [total_force / obj.I; total_moment / obj.m];
 		end
 	end
