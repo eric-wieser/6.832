@@ -13,6 +13,7 @@ classdef HolonomicDrive < SecondOrderSystem
 			% wheels: struct of
 			%   pos:    offset from center of mass
 			%   b:      damping factor of motor
+			%   r:      wheel radius
 			%   driveDir: drive direction, a unit vector
 			%   slipDir: slip direction. For mecanum wheels, this is not
 			%            orthogonal to the drive direction
@@ -20,7 +21,7 @@ classdef HolonomicDrive < SecondOrderSystem
 			% m: total mass of robot
 			n = length(wheels);
 
-			obj@SecondOrderSystem(3, n, true);
+			obj = obj@SecondOrderSystem(3, n, true);
 			
 			obj.I = I;
 			obj.m = m;
@@ -35,7 +36,7 @@ classdef HolonomicDrive < SecondOrderSystem
 			obj = setOutputFrame(obj,obj.getStateFrame);
 		end
 		
-		function speeds = wheelSpeeds(obj, vel, omega)
+		function speeds = rotorSpeeds(obj, vel, omega)
 			% get the wheel speeds needed to give the robot a certain
 			% velocity in body space
 			i = 1;
@@ -46,8 +47,8 @@ classdef HolonomicDrive < SecondOrderSystem
 				
 				% decompose into powered and unpowered direction
 				vwheel = [wheel.driveDir wheel.slipDir] \ totalv;
-				
-				speeds(i) = vwheel(1);
+
+				speeds(i) = vwheel(1) / wheel.r;
 				i = i + 1;
 			end
 		end
@@ -58,24 +59,25 @@ classdef HolonomicDrive < SecondOrderSystem
 			
 			bodyvel = rotation \ qd(1:2);
 			
-			speeds = obj.wheelSpeeds(bodyvel, qd(3));
+			speeds = obj.rotorSpeeds(bodyvel, qd(3));
 			
 			n = length(obj.wheels);
 			
 			total_force = [0; 0];
 			total_moment = 0;
-			for i=1:n
+			for i = 1:n
+				wheel = obj.wheels(i);
 				% simplified motor dynamics
-				fscalar = u(i) - obj.wheels(i).b*speeds(i);
+				tau = u(i) - wheel.b*speeds(i);
 				
 				% assign direction to force
-				f = fscalar * obj.wheels(i).driveDir;
+				f = tau / wheel.r * wheel.driveDir;
 				
 				% combine forces
 				total_force = total_force + f;
 				total_moment = total_moment...
-					         + obj.wheels(i).pos(1) * f(2)...
-					         - obj.wheels(i).pos(2) * f(1);
+					         + wheel.pos(1) * f(2)...
+					         - wheel.pos(2) * f(1);
 			end
 			
 			qdd = [total_force / obj.I; total_moment / obj.m];
@@ -97,6 +99,7 @@ classdef HolonomicDrive < SecondOrderSystem
 				wheels(i).driveDir = [-sin(theta); cos(theta)];
 				wheels(i).slipDir = [cos(theta); sin(theta)];
 				wheels(i).b = 1;
+				wheels(i).r = 1;
 			end
 			
 			obj = HolonomicDrive(wheels, 1, 1);
