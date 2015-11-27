@@ -11,7 +11,11 @@ classdef HolonomicDriveVisualizer < Visualizer
 			obj.wheels = plant.wheels;
 			
 			vertices = [obj.wheels.pos];
-			obj.outline = vertices(:, convhull(vertices(1,:), vertices(2,:)));
+			if length(obj.wheels) > 2
+				obj.outline = vertices(:, convhull(vertices(1,:), vertices(2,:)));
+			else
+				obj.outline = vertices;
+			end
 		end
 		
 		function draw(obj, ~, x)			
