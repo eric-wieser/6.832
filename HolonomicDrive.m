@@ -96,7 +96,7 @@ classdef HolonomicDrive < SecondOrderSystem
 		
 		function [utraj,xtraj]=runDircol(p,x0,xf,tf0)
 			N = 151;
-			prog = DircolTrajectoryOptimization(p,N,[5 25]);
+			prog = DirtranTrajectoryOptimization(p,N,[5 25]);
 			prog = prog.addInputConstraint(BoundingBoxConstraint(p.umin, p.umax), 1:N);
 			prog = prog.addStateConstraint(ConstantConstraint(x0), 1);
 			prog = prog.addStateConstraint(ConstantConstraint(xf), N);
