@@ -2,7 +2,7 @@ classdef HolonomicDrive < SecondOrderSystem
 	%HOLONOMICDRIVE Summary of this class goes here
 	%   Detailed explanation goes here
 	
-	properties
+	properties (SetAccess = private, GetAccess = public)
 		m
 		I
 		wheels
