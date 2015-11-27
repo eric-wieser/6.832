@@ -113,11 +113,12 @@ classdef HolonomicDrive < SecondOrderSystem
 			v = HolonomicDriveVisualizer(plant);
 			
 			
-			u0 = Point(plant.getInputFrame, [1; -0.5; 0]);
+			u0 = Point(plant.getInputFrame, [1; -1; 0]);
+			x0 = Point(plant.getStateFrame, zeros(6, 1));
 			
 			sys = cascade(ConstantTrajectory(u0), plant);
 			
-			xtraj = simulate(sys, [0 10]);
+			xtraj = simulate(sys, [0 10], x0);			
 			
 			v.playback(xtraj, struct('slider', true));
 		end
