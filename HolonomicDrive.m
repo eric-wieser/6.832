@@ -34,6 +34,9 @@ classdef HolonomicDrive < SecondOrderSystem
 			obj = setStateFrame(obj,CoordinateFrame('HolonomicState',6,'x',...
 				{'1','2','theta', '1_dot','2_dot', 'theta_dot'}));
 			obj = setOutputFrame(obj,obj.getStateFrame);
+			
+			generateGradients('sodynamics', 2, 'dynamicsGradients', obj, 0,...
+				rand(3, 1), rand(3, 1), rand(n, 1))
 		end
 		
 		function speeds = rotorSpeeds(obj, vel, omega)
@@ -53,7 +56,11 @@ classdef HolonomicDrive < SecondOrderSystem
 			end
 		end
 		
-		function qdd = sodynamics(obj,~,q,qd,u)
+		function [qdd, df, d2f] = sodynamics(obj,~,q,qd,u)
+			if nargout > 1
+				[df,d2f]= dynamicsGradients(obj,0,q,qd,u,nargout-1);
+			end
+		
 			theta = q(3);
 			rotation = [[cos(theta); sin(theta)] [-sin(theta); cos(theta)]];
 			
@@ -84,6 +91,38 @@ classdef HolonomicDrive < SecondOrderSystem
 			total_force = rotation * total_force;
 			
 			qdd = [total_force / obj.I; total_moment / obj.m];
+		end
+		
+		
+		function [utraj,xtraj]=runDircol(p,x0,xf,tf0)
+			N = 151;
+			prog = DircolTrajectoryOptimization(p,N,[5 25]);
+			prog = prog.addInputConstraint(BoundingBoxConstraint(p.umin, p.umax), 1:N);
+			prog = prog.addStateConstraint(ConstantConstraint(x0), 1);
+			prog = prog.addStateConstraint(ConstantConstraint(xf), N);
+			prog = prog.addRunningCost(@cost);
+			prog = prog.addFinalCost(@finalCost);
+
+			function [g,dg] = cost(dt,x,u)
+				R = 0;
+				g = u'*R*u;
+				%g = sum((R*u).*u,1);
+				%dg = [zeros(1,1+size(x,1)),2*u'*R];
+				dg = zeros(1, 1 + size(x,1) + size(u,1));
+			end
+			
+			function [h,dh] = finalCost(t,x)
+				h = t;
+				dh = [1,zeros(1,size(x,1))];
+			end
+
+			traj_init.x = PPTrajectory(foh([0,tf0],[x0,xf]));
+			info = 0;
+			while (info~=1)
+				tic
+				[xtraj,utraj,z,F,info] = prog.solveTraj(tf0);
+				toc
+			end
 		end
 	end
 	
@@ -120,6 +159,27 @@ classdef HolonomicDrive < SecondOrderSystem
 			
 			xtraj = simulate(sys, [0 10], x0);			
 			
+			v.playback(xtraj, struct('slider', true));
+		end
+		
+		function trajectory()
+			plant = HolonomicDrive.defaultInstance();
+			
+			x0 = zeros(6, 1);
+			xf = [10; 10; pi; 0; 0; 0];
+			
+			[utraj, xtraj] = plant.runDircol(x0, xf, 15);
+			
+			t = utraj.tspan(1):0.1:utraj.tspan(2);
+			figure
+			subplot(1, 2, 1);
+			plot(t, utraj.eval(t));
+			subplot(1, 2, 2);
+			xs = xtraj.eval(t);
+			plot(xs(1,:), xs(1,:));
+			quiver(xs(1,:), xs(1,:), cos(xs(3,:)), sin(xs(3,:)))
+			
+			v = HolonomicDriveVisualizer(plant);
 			v.playback(xtraj, struct('slider', true));
 		end
 	end
