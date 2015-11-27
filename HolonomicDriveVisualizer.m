@@ -14,16 +14,7 @@ classdef HolonomicDriveVisualizer < Visualizer
 			obj.outline = vertices(:, convhull(vertices(1,:), vertices(2,:)));
 		end
 		
-		function draw(obj, ~, x)
-			persistent hFig;
-
-			if (isempty(hFig))
-				hFig = sfigure(obj.fignum);
-				
-				set(hFig,'DoubleBuffer', 'on');
-			end
-			
-			sfigure(hFig); cla; hold on;
+		function draw(obj, ~, x)			
 			axis 'equal';
 			grid on;
 			
