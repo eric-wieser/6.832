@@ -135,7 +135,7 @@ classdef HolonomicDrive < SecondOrderSystem
 		
 			wheels = [];
 			for i = 1:n
-				theta = 2*pi * (i/n);
+				theta = 2*pi * (2*i-1)/(2*n);
 				wheels(i).pos = [r*cos(theta); r*sin(theta)];
 			
 				% first column - active direction
