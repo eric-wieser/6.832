@@ -127,9 +127,11 @@ classdef HolonomicDrive < SecondOrderSystem
 	end
 	
 	methods(Static)
-		function obj = defaultInstance()
+		function obj = defaultInstance(n)
 			r = 1;
-			n = 3;
+			if ~exist('n', 'var')
+				n = 3;
+			end
 		
 			wheels = [];
 			for i = 1:n
