@@ -2,6 +2,7 @@ classdef HolonomicDriveVisualizer < Visualizer
 	properties
 		wheels
 		outline
+		radius
 	end
 	
 	methods
@@ -11,11 +12,14 @@ classdef HolonomicDriveVisualizer < Visualizer
 			obj.wheels = plant.wheels;
 			
 			vertices = [obj.wheels.pos];
-			if length(obj.wheels) > 2
+			try
 				obj.outline = vertices(:, convhull(vertices(1,:), vertices(2,:)));
-			else
+			catch e
+				warning(['Couldn''t get convex hull of body: ' e.message]);
 				obj.outline = vertices;
 			end
+			
+			obj.radius = sum(cellfun(@(x) norm(x), num2cell(vertices, 1))) / length(obj.wheels);
 		end
 		
 		function draw(obj, ~, x)			
@@ -45,6 +49,8 @@ classdef HolonomicDriveVisualizer < Visualizer
 				
 				patch(g_corners(1,:), g_corners(2,:), [0.5 0.5 0.5]);
 			end
+			forward = rotation(:,1)*obj.radius;
+			quiver(x(1), x(2), forward(1), forward(2));
 		end
 	end	
 end
