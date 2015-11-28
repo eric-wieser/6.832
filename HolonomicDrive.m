@@ -1,13 +1,13 @@
 classdef HolonomicDrive < SecondOrderSystem
 	%HOLONOMICDRIVE Summary of this class goes here
 	%   Detailed explanation goes here
-	
+
 	properties (SetAccess = private, GetAccess = public)
 		m
 		I
 		wheels
 	end
-	
+
 	methods
 		function obj = HolonomicDrive(wheels, I, m)
 			% wheels: struct of
@@ -22,20 +22,20 @@ classdef HolonomicDrive < SecondOrderSystem
 			n = length(wheels);
 
 			obj = obj@SecondOrderSystem(3, n, true);
-			
+
 			obj.I = I;
 			obj.m = m;
 			obj.wheels = wheels;
-			
+
 			obj = setInputLimits(obj,-1,1);
-			
+
 			obj = setInputFrame(obj,CoordinateFrame('HolonomicInput',n,'u',...
 				arrayfun(@(i) sprintf('tau%d', i), 1:n, 'Unif', false)));
 			obj = setStateFrame(obj,CoordinateFrame('HolonomicState',6,'x',...
 				{'1','2','theta', '1_dot','2_dot', 'theta_dot'}));
 			obj = setOutputFrame(obj,obj.getStateFrame);
 		end
-		
+
 		function speeds = rotorSpeeds(obj, vel, omega)
 			% get the wheel speeds needed to give the robot a certain
 			% velocity in body space
@@ -44,7 +44,7 @@ classdef HolonomicDrive < SecondOrderSystem
 				% r cross omega
 				rotv = omega * [-wheel.pos(2); wheel.pos(1)];
 				totalv = vel + rotv;
-				
+
 				% decompose into powered and unpowered direction
 				vwheel = [wheel.driveDir wheel.slipDir] \ totalv;
 
@@ -68,43 +68,41 @@ classdef HolonomicDrive < SecondOrderSystem
 					qdddx(:,7+i) = -qdddxi(:,7);
 				end
 			end
-		
+
 			theta = q(3);
 			rotation = [[cos(theta); sin(theta)] [-sin(theta); cos(theta)]];
-			
+
 			bodyvel = rotation \ qd(1:2);
-			
+
 			speeds = obj.rotorSpeeds(bodyvel, qd(3));
-			
-			n = length(obj.wheels);
-			
+
+
 			total_force = [0; 0];
 			total_moment = 0;
 			for i = 1:n
 				wheel = obj.wheels(i);
 				% simplified motor dynamics
 				tau = u(i) - wheel.b*speeds(i);
-				
+
 				% assign direction to force
 				f = tau / wheel.r * wheel.driveDir;
-				
+
 				% combine forces
 				total_force = total_force + f;
 				total_moment = total_moment...
 					         + wheel.pos(1) * f(2)...
 					         - wheel.pos(2) * f(1);
 			end
-			
+
 			% convert force to world space
 			total_force = rotation * total_force;
-			
+
 			qdd = [total_force / obj.I; total_moment / obj.m];
 		end
-		
-		
-		function [utraj,xtraj]=runDircol(p,x0,xf,tf0)
-			N = 151;
-			prog = DirtranTrajectoryOptimization(p,N,[5 25]);
+
+		function [utraj,xtraj]=optimalTrajectory(p,x0,xf, tf0)
+			N = 51;
+			prog = DirtranTrajectoryOptimization(p,N,[tf0/2 tf0*2]);
 			prog = prog.addInputConstraint(BoundingBoxConstraint(p.umin, p.umax), 1:N);
 			prog = prog.addStateConstraint(ConstantConstraint(x0), 1);
 			prog = prog.addStateConstraint(ConstantConstraint(xf), N);
@@ -118,7 +116,7 @@ classdef HolonomicDrive < SecondOrderSystem
 				%dg = [zeros(1,1+size(x,1)),2*u'*R];
 				dg = zeros(1, 1 + size(x,1) + size(u,1));
 			end
-			
+
 			function [h,dh] = finalCost(t,x)
 				h = t;
 				dh = [1,zeros(1,size(x,1))];
@@ -133,19 +131,19 @@ classdef HolonomicDrive < SecondOrderSystem
 			end
 		end
 	end
-	
+
 	methods(Static)
 		function obj = defaultInstance(n)
 			r = 1;
 			if ~exist('n', 'var')
 				n = 3;
 			end
-		
+
 			wheels = [];
 			for i = 1:n
 				theta = 2*pi * (2*i-1)/(2*n);
 				wheels(i).pos = [r*cos(theta); r*sin(theta)];
-			
+
 				% first column - active direction
 				% second column - passive direction
 				wheels(i).driveDir = [-sin(theta); cos(theta)];
@@ -153,33 +151,33 @@ classdef HolonomicDrive < SecondOrderSystem
 				wheels(i).b = 1;
 				wheels(i).r = 1;
 			end
-			
+
 			obj = HolonomicDrive(wheels, 1, 1);
 		end
-		
+
 		function runTest()
 			plant = HolonomicDrive.defaultInstance();
 			v = HolonomicDriveVisualizer(plant);
-			
-			
+
+
 			u0 = Point(plant.getInputFrame, [1; -1; 0]);
 			x0 = Point(plant.getStateFrame, zeros(6, 1));
-			
+
 			sys = cascade(ConstantTrajectory(u0), plant);
-			
-			xtraj = simulate(sys, [0 10], x0);			
-			
+
+			xtraj = simulate(sys, [0 10], x0);
+
 			v.playback(xtraj, struct('slider', true));
 		end
-		
+
 		function trajectory()
-			plant = HolonomicDrive.defaultInstance();
-			
+			plant = HolonomicDrive.defaultInstance(3);
+
 			x0 = zeros(6, 1);
-			xf = [10; 10; pi; 0; 0; 0];
-			
-			[utraj, xtraj] = plant.runDircol(x0, xf, 15);
-			
+			xf = [0; 10; 0; 0; 0; 0];
+
+			[utraj, xtraj] = plant.optimalTrajectory(x0, xf, 15);
+
 			t = utraj.tspan(1):0.1:utraj.tspan(2);
 			figure
 			subplot(1, 2, 1);
@@ -188,7 +186,7 @@ classdef HolonomicDrive < SecondOrderSystem
 			xs = xtraj.eval(t);
 			plot(xs(1,:), xs(2,:));
 			quiver(xs(1,:), xs(2,:), cos(xs(3,:)), sin(xs(3,:)))
-			
+
 			v = HolonomicDriveVisualizer(plant);
 			v.playback(xtraj, struct('slider', true));
 		end
