@@ -34,9 +34,6 @@ classdef HolonomicDrive < SecondOrderSystem
 			obj = setStateFrame(obj,CoordinateFrame('HolonomicState',6,'x',...
 				{'1','2','theta', '1_dot','2_dot', 'theta_dot'}));
 			obj = setOutputFrame(obj,obj.getStateFrame);
-			
-			generateGradients('sodynamics', 2, 'dynamicsGradients', obj, 0,...
-				rand(3, 1), rand(3, 1), rand(n, 1))
 		end
 		
 		function speeds = rotorSpeeds(obj, vel, omega)
@@ -55,10 +52,21 @@ classdef HolonomicDrive < SecondOrderSystem
 				i = i + 1;
 			end
 		end
-		
-		function [qdd, df, d2f] = sodynamics(obj,~,q,qd,u)
+
+		function [qdd, qdddx] = sodynamics(obj,t,q,qd,u)
+			n = length(obj.wheels);
+
 			if nargout > 1
-				[df,d2f]= dynamicsGradients(obj,0,q,qd,u,nargout-1);
+				qdddx = zeros(3, 7 + n);
+				% dynamics are linear in each wheel.
+				for i = 1:n
+					wheel = obj.wheels(i);
+					qdddxi = oneWheelGradients(obj.m, obj.I, wheel, t, q, qd, u(i));
+					qdddx(:,1:7) = qdddx(:,1:7) + qdddxi(:,1:7);
+					
+					% qdd / du_i
+					qdddx(:,7+i) = -qdddxi(:,7);
+				end
 			end
 		
 			theta = q(3);
