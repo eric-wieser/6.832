@@ -3,6 +3,9 @@ classdef HolonomicDriveVisualizer < Visualizer
 		wheels
 		outline
 		radius
+
+
+    	fade_percent = 0;
 	end
 
 	methods
@@ -31,7 +34,7 @@ classdef HolonomicDriveVisualizer < Visualizer
 
 			% draw the body
 			body = gadd(x(1:2), rotation * obj.outline);
-			patch(body(1,:), body(2,:), 'r');
+			patch(body(1,:), body(2,:), 'r', 'FaceAlpha', 1-obj.fade_percent);
 
 			corners = [1 1 -1 -1; 1 -1 -1 1];
 			corners = gmultiply(corners, [1; 0.1]);
@@ -47,7 +50,7 @@ classdef HolonomicDriveVisualizer < Visualizer
 				% corners of wheels in global space
 				g_corners = gadd(x(1:2), rotation * b_corners);
 
-				patch(g_corners(1,:), g_corners(2,:), [0.5 0.5 0.5]);
+				patch(g_corners(1,:), g_corners(2,:), [0.5 0.5 0.5], 'FaceAlpha', 1-obj.fade_percent);
 			end
 			forward = rotation(:,1)*obj.radius;
 			quiver(x(1), x(2), forward(1), forward(2));
