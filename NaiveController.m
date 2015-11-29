@@ -12,12 +12,17 @@ classdef NaiveController < DrakeSystem
 			obj.plant = plant;
 		end
 		
-		function xd = dynamics(obj, ~, ~, ~)
+		function [xd, dxdot] = dynamics(obj, ~, ~, ~)
 			xd = [];
+			dxdot = zeros(0, 4);
 		end
 
 		function y = output(obj, ~, ~, u)
-			y = obj.plant.rotorSpeeds(u(1:2), u(3));
+			y = [obj.plant.wheels.b]' .* obj.plant.rotorSpeeds(u(1:2), u(3));
+			if ~all((obj.plant.umin <= y) | (y <= obj.plant.umax));
+				maxr = max([y / obj.plant.umin; y / obj.plant.umax]);
+				y = y / maxr;
+			end
 		end
 	end
 end
