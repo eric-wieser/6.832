@@ -40,6 +40,7 @@ classdef HolonomicDrive < SecondOrderSystem
 			% get the wheel speeds needed to give the robot a certain
 			% velocity in body space
 			i = 1;
+			speeds = zeros(length(obj.wheels), 1)*vel(1); % to help TaylorVar
 			for wheel = obj.wheels
 				% r cross omega
 				rotv = omega * [-wheel.pos(2); wheel.pos(1)];
