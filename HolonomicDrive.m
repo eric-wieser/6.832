@@ -187,8 +187,17 @@ classdef HolonomicDrive < SecondOrderSystem
 			plot(xs(1,:), xs(2,:));
 			quiver(xs(1,:), xs(2,:), cos(xs(3,:)), sin(xs(3,:)))
 
-			v = HolonomicDriveVisualizer(plant);
-			v.playback(xtraj, struct('slider', true));
+			v1 = HolonomicDriveVisualizer(plant);
+			function draw(t, x)
+				xs = xtraj.eval(xtraj.tspan(1):0.1:t);
+				plot(x2s(1,:), x2s(2,:), 'y');
+				plot(xs(1,:), xs(2,:));
+
+				v1.draw(t, x)
+			end
+			v2 = FunctionHandleVisualizer(plant.getOutputFrame, @draw);
+			
+			v2.playback(xtraj, struct('slider', true));
 		end
 	end
 end
