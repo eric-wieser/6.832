@@ -73,7 +73,7 @@ classdef HolonomicDrive < SecondOrderSystem
 			theta = q(3);
 			rotation = [[cos(theta); sin(theta)] [-sin(theta); cos(theta)]];
 
-			bodyvel = rotation \ qd(1:2);
+			bodyvel = rotation' * qd(1:2);
 
 			speeds = obj.rotorSpeeds(bodyvel, qd(3));
 
