@@ -66,7 +66,7 @@ classdef HolonomicDrive < SecondOrderSystem
 					qdddx(:,1:7) = qdddx(:,1:7) + qdddxi(:,1:7);
 
 					% qdd / du_i
-					qdddx(:,7+i) = -qdddxi(:,7);
+					qdddx(:,7+i) = qdddxi(:,8);
 				end
 			end
 

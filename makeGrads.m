@@ -11,7 +11,7 @@ function makeGrads(n)
   [wheel, symdict('wheel')] = symbolify(wheel, 'wheel');
   m = sym('m');
   I = sym('I');
-  obj = HolonomicDrive([wheel], m, I);
+  obj = HolonomicDrive([wheel], I, m);
 
   % symbols to differentiate wrt to
   [t, symdict('t')] = symbolify(0,'t');
@@ -25,7 +25,7 @@ function makeGrads(n)
 
 
   fp = fopen('oneWheelGradients.m', 'w');
-  fprintf(fp, 'function [df] = oneWheelGradients(m, I, wheel, t, q, qd, u)\n')
+  fprintf(fp, 'function [df] = oneWheelGradients(m, I, wheel, t, q, qd, u)\n');
   fprintf(fp, '%% Unpack variables\n');
 
 
