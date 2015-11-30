@@ -98,7 +98,7 @@ classdef HolonomicDrive < SecondOrderSystem
 			% convert force to world space
 			total_force = rotation * total_force;
 
-			qdd = [total_force / obj.I; total_moment / obj.m];
+			qdd = [total_force / obj.m; total_moment / obj.I];
 		end
 
 		function [utraj,xtraj]=optimalTrajectory(p,x0,xf, tf0)
