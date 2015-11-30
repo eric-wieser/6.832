@@ -29,8 +29,12 @@ classdef HolonomicDriveVisualizer < Visualizer
 			axis 'equal';
 			grid on;
 
-			theta = x(3);
-			rotation = [[cos(theta); sin(theta)] [-sin(theta); cos(theta)]];
+			if length(x) == 6
+				theta = x(3);
+				rotation = [[cos(theta); sin(theta)] [-sin(theta); cos(theta)]];
+			else
+				rotation = [[x(3); x(4)] [-x(4); x(3)]];
+			end
 
 			% draw the body
 			body = gadd(x(1:2), rotation * obj.outline);
