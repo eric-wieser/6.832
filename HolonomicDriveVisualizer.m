@@ -42,7 +42,7 @@ classdef HolonomicDriveVisualizer < Visualizer
 			% draw the wheels
 			for wheel = obj.wheels
 				% corners of wheels in wheel space
-				w_corners = [wheel.driveDir wheel.slipDir] * corners;
+				w_corners = wheel.r * [wheel.driveDir wheel.slipDir] * corners;
 
 				% corners of wheels in body space
 				b_corners = gadd(wheel.pos, w_corners);
