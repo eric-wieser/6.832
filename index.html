@@ -5,7 +5,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
   <meta name="viewport" content="width=1024, user-scalable=no">
 
-  <title>Your deck.js Presentation</title>
+  <title>Time-optimal trajectories of holonomic drive robots</title>
 
   <!-- Required stylesheet -->
   <link rel="stylesheet" media="screen" href="deck.js/core/deck.core.css">
@@ -29,6 +29,8 @@
   <!-- Required Modernizr file -->
   <script src="deck.js/modernizr.custom.js"></script>
 
+  <link rel="stylesheet" href="misc.css">
+
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r73/three.min.js"></script>
 </head>
 <body>
@@ -45,17 +47,81 @@
 
     <section class="slide">
       <h2>Application</h2>
-      <p>Robocup Small-Size League</p>
+      <div class="slide cover-photo" style="width: 50%; bottom: 0; top: 0; left: 50%">
+        <div style="background-image: url(images/small-size-1.jpg)"></div>
+        <span>http://www.robocup2014.org/</span>
+      </div>
+      <div class="slide fill-photo" style="width: 50%; bottom: 0; top: 0; left: 0">
+        <div style="background-image: url(images/small-size-robot.png)"></div>
+        <span>"FU-Fighters", Freie Universität Berlin</span>
+      </div>
     </section>
 
     <section class="slide">
-      <h2>Dynamics</h2>
+      <h2>Holonomic drive</h2>
+      <p>(Also known as Omnidirectional or Mecanum)</p>
       <ul>
         <li class="slide">X motion</li>
         <li class="slide">Y motion</li>
         <li class="slide">Rotary motion</li>
       </ul>
       <iframe src="viewer.html" style="position: absolute; top:0; left: 0; width: 100%; height: 100%; z-index: -1">
+      </iframe>
+    </section>
+
+    <section class="slide">
+      <h2>Dynamics</h2>
+        <div style="width: 50%; float: left">
+          <div class="slide">
+            <p>Modelled:</p>
+            <ul>
+              <li>Arbitrary wheel positioning and count</li>
+              <li>Body inertial</li>
+              <li>Motor damping</li>
+            </ul>
+          </div>
+          <div class="slide">
+            <p>Not modelled</p>
+            <ul>
+              <li>Wheel inertial</li>
+              <li>Out-of-plane torque</li>
+              <li>Damping on the sub-wheels</li>
+              <li>Skid</li>
+            </ul>
+          </div>
+        </div>
+        <div style="width: 50%; float: left">
+          <div class="slide">
+            <p>Method</p>
+            <ul>
+              <li>
+                <p>Resolve body velocity into wheel velocity</p>
+                $$
+                \begin{bmatrix}r\dot{\theta}_{wheel} \\ v_{subwheel}\end{bmatrix} =
+                \begin{bmatrix}
+                \uparrow &amp; \uparrow \\
+                \mathbf{e}_{drive} &amp; \mathbf{e}_{slide} \\
+                \downarrow &amp; \downarrow
+                \end{bmatrix}^{-1}
+                \left(\dot{\mathbf{x}} + \mathbf{\omega} \times \mathbf{x}_{wheel}\right)
+                $$
+              </li>
+              <li>
+                <p>Compute net torque at each motor</p>
+                $$\tau = u - b \dot{\theta}_{wheel}$$
+              </li>
+              <li>
+                <p>Resolve wheel forces back to body forces</p>
+                $$
+                \begin{aligned}
+                m\ddot{\mathbf{x}}       &amp;= \sum{r\tau \mathbf{e}_{drive}} \\
+                m\ddot{\mathbf{x\theta}} &amp;= \sum{ \mathbf{x}_{wheel} \times r\tau \mathbf{e}_{drive}}
+                \end{aligned}
+                $$
+              </li>
+            </ul>
+          </div>
+        </div>
       </iframe>
     </section>
 
@@ -137,5 +203,19 @@
     $.deck('.slide');
   });
 </script>
+
+<!-- MathJax typesetting -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    "HTML-CSS": { availableFonts: ["TeX"] },
+    extensions: ["tex2jax.js"],
+    jax: ["input/TeX","output/HTML-CSS"],
+    tex2jax: {inlineMath: [["$","$"],["\\(","\\)"]]},
+    messageStyle: 'none',
+  });
+</script>
+<script type="text/javascript"
+  src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script> 
 </body>
 </html>
