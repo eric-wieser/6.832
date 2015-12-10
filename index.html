@@ -15,7 +15,7 @@
   <link rel="stylesheet" media="screen" href="deck.js/extensions/menu/deck.menu.css">
   <link rel="stylesheet" media="screen" href="deck.js/extensions/navigation/deck.navigation.css">
   <link rel="stylesheet" media="screen" href="deck.js/extensions/status/deck.status.css">
-  <link rel="stylesheet" media="screen" href="deck.js/extensions/scale/deck.scale.css">
+  <!-- <link rel="stylesheet" media="screen" href="deck.js/extensions/scale/deck.scale.css"> -->
 
   <!-- Style theme. More available in /themes/style/ or create your own. -->
   <link rel="stylesheet" media="screen" href="deck.js/themes/style/swiss.css">
@@ -65,7 +65,7 @@
         <li class="slide">Y motion</li>
         <li class="slide">Rotary motion</li>
       </ul>
-      <iframe src="viewer.html" style="position: absolute; top:0; left: 0; width: 100%; height: 100%; z-index: -1">
+      <iframe src="viewer.html?simple" style="position: absolute; top:0; left: 0; width: 100%; height: 100%; z-index: -1">
       </iframe>
     </section>
 
@@ -127,10 +127,16 @@
 
     <section class="slide">
       <h2>Suboptimality</h2>
+      <p>Wasted motor power when moving in some directions</p>
+      <p>Reorientating takes time</p>
+      <p class="slide">Can we do better?</p>
     </section>
 
     <section class="slide">
       <h2>Results</h2>
+      <div class="slide"></div>
+      <iframe src="viewer.html?time" style="position: absolute; top:0; left: 0; width: 100%; height: 100%; z-index: -1">
+      </iframe>
     </section>
 
     <section class="slide">
@@ -177,7 +183,7 @@
 <script src="deck.js/extensions/goto/deck.goto.js"></script>
 <script src="deck.js/extensions/status/deck.status.js"></script>
 <script src="deck.js/extensions/navigation/deck.navigation.js"></script>
-<script src="deck.js/extensions/scale/deck.scale.js"></script>
+<!-- <script src="deck.js/extensions/scale/deck.scale.js"></script> -->
 
 <!-- Initialize the deck. You can put this in an external file if desired. -->
 <script>

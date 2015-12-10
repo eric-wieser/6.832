@@ -20,10 +20,9 @@ if(location.search == '?simple') {
 	Q.all([
 		Trajectory.load('simple2.bin',10),
 		Trajectory.load('simple1.bin',10),
-		Trajectory.load('simple3.bin',10),
-		Trajectory.load('time-comparison.trj',10)
+		Trajectory.load('simple3.bin',10)
 	]).then(function(trajs) {
-		all_trajs = trajs.slice(0, 3);
+		all_trajs = trajs;
 		c.start();
 	});
 
@@ -61,7 +60,7 @@ else if(location.search == '?time') {
 
 	mgr.camera.position.y = 1;
 	mgr.camera.position.x = 0;
-	mgr.camera.position.z = -0.25;
+	mgr.camera.position.z = 0.25;
 
 	var robot1 = new Robot(0xff0000);
 	var robot2 = new Robot(0x0000ff);
@@ -72,7 +71,7 @@ else if(location.search == '?time') {
 		mgr.scene.add(robot2);
 
 		mgr.addEventListener('update', function() {
-			var state = traj.eval(clock.getElapsedTime() - 2);
+			var state = traj.eval(clock.getElapsedTime());
 			var x1 = state.slice(0, 10);
 			var x2 = state.slice(10, 20);
 
