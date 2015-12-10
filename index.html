@@ -103,7 +103,7 @@
                 \mathbf{e}_{drive} &amp; \mathbf{e}_{slide} \\
                 \downarrow &amp; \downarrow
                 \end{bmatrix}^{-1}
-                \left(\dot{\mathbf{x}} + \mathbf{\omega} \times \mathbf{x}_{wheel}\right)
+                R(\theta)^{-1} \left(\dot{\mathbf{x}} + \mathbf{\omega} \times \mathbf{x}_{wheel}\right)
                 $$
               </li>
               <li>
@@ -114,7 +114,7 @@
                 <p>Resolve wheel forces back to body forces</p>
                 $$
                 \begin{aligned}
-                m\ddot{\mathbf{x}}       &amp;= \sum{r\tau \mathbf{e}_{drive}} \\
+                m\ddot{\mathbf{x}}       &amp;= R(\theta) \sum{r\tau \mathbf{e}_{drive}} \\
                 m\ddot{\mathbf{x\theta}} &amp;= \sum{ \mathbf{x}_{wheel} \times r\tau \mathbf{e}_{drive}}
                 \end{aligned}
                 $$
