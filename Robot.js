@@ -1,4 +1,4 @@
-var Robot = function() {
+var Robot = function(baseColor) {
 	THREE.Object3D.call(this);
 
 	var r = 0.078;
@@ -9,7 +9,7 @@ var Robot = function() {
 
 	this.base = new THREE.Mesh(
 		new THREE.CylinderGeometry(r - wwr, r - wwr, 0.005, 32),
-		new THREE.MeshPhongMaterial({color: 0xff0000})
+		new THREE.MeshPhongMaterial({color: baseColor || 0xff0000})
 	);
 	this.base.position.y += wr;
 	this.add(this.base);
