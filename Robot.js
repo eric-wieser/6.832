@@ -62,6 +62,6 @@ Robot.prototype.setState = function(x, y, theta, wheelAngles) {
 	this.rotation.y = theta;
 
 	wheelAngles.forEach(function(phi, i) {
-		this.wheels[i].rotation.z = phi;
+		this.wheels[i].rotation.z = -phi;
 	}, this);
 }

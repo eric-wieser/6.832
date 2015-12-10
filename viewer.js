@@ -47,7 +47,19 @@ plane.rotateOnAxis(new THREE.Vector3(1, 0, 0), Math.PI / 2);
 plane.translateZ(0.001)
 scene.add( plane );
 
+var active_traj_id = 0;
+var all_trajs = null;
 
+var c = new THREE.Clock();
+Q.all([
+	Trajectory.load('simple1.bin',10),
+	Trajectory.load('simple2.bin',10),
+	Trajectory.load('simple3.bin',10)
+]).then(function(trajs) {
+	all_trajs = trajs;
+	c.start();
+
+});
 
 var render = function () {
 	requestAnimationFrame( render );
@@ -56,17 +68,20 @@ var render = function () {
 
 	controls.update();
 
+	if(all_trajs) {
+		var traj = all_trajs[active_traj_id];
+		var t = c.getElapsedTime();
+		traj = traj.eval(t % 2);
+		robot.setState(traj[0], traj[1], traj[2], traj.slice(6));
+
+		if(t > 2) {
+			active_traj_id = (active_traj_id + 1) % 3;
+			c = new THREE.Clock(true);
+		}
+	}
+
 	renderer.render(scene, camera);
 };
-
-var dir = new THREE.Vector3( 1, 0, 0 );
-var origin = new THREE.Vector3( 0, 0, 0 );
-var length = 1;
-var hex = 0xffff00;
-
-var arrowHelper = new THREE.ArrowHelper( dir, origin, length, hex );
-scene.add( arrowHelper );
-
 
 render();
 
