@@ -19,8 +19,8 @@ var Scene = function(n) {
 
 	var plane = (function() {
 		var ms = [
-			new THREE.MeshBasicMaterial({color: 0x008000, side: THREE.DoubleSide, transparent: 1, opacity: 0.25}),
-			new THREE.MeshBasicMaterial({color: 0x102000, side: THREE.DoubleSide, transparent: 1, opacity: 0.25})
+			new THREE.MeshLambertMaterial({color: 0x00c000, side: THREE.DoubleSide, transparent: true, opacity: 0.25}),
+			new THREE.MeshLambertMaterial({color: 0x008000, side: THREE.DoubleSide, transparent: true, opacity: 0.5})
 		];
 		n = n || 8;
 		var g = new THREE.PlaneGeometry(n*0.05, n*0.05, n, n);
@@ -28,7 +28,8 @@ var Scene = function(n) {
 			si = Math.floor(i / 2);
 			g.faces[i].materialIndex = ((si % n)+ Math.floor(si / n)) % 2;
 		}
-		return new THREE.Mesh(g, new THREE.MeshFaceMaterial(ms));
+		var m = new THREE.MeshFaceMaterial(ms);
+		return new THREE.Mesh(g, m);
 	})();
 
 	plane.rotateOnAxis(new THREE.Vector3(1, 0, 0), Math.PI / 2);

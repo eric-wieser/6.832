@@ -137,22 +137,34 @@
 
     <section class="slide">
       <h2>Approach</h2>
-      <ul>
-        <li>Trajectory optimization (direct collocated)</li>
-        <li>For the na&iuml;ve controller, constrain all intermediate positions to lie along a line</li>
-        <li class="slide">Constant displacement (previous slide)
-          <ul>
-            <li>Constrain start and end positions</li>
-            <li>Minimize time</li>
-          </ul>
-        </li>
-        <li class="slide">Constant time for a given direction
-          <ul>
-            <li>Constrain goal position to lie along line (<code>null(dir)*x = null(dir)*x0</code>)</li>
-            <li>Maximize distance from start location</li>
-          </ul>
-        </li>
-      </ul>
+      <div style="width: 50%; float: left">
+        <ul>
+          <li>Trajectory optimization (direct collocated)</li>
+          <li>For the na&iuml;ve controller, constrain all intermediate positions to lie along a line</li>
+          <li class="slide">Constant displacement (previous slide)
+            <ul>
+              <li>Constrain start and end positions</li>
+              <li>Minimize time</li>
+            </ul>
+          </li>
+          <li class="slide">Constant time for a given direction
+            <ul>
+              <li>Constrain goal position to lie along line <br /><code>null(dir)*x = null(dir)*x0</code></li>
+              <li>Maximize distance from start location</li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+      <div style="width: 50%; float: left">
+        <img class="slide" src="images/contour.svg" style="width: 100%; max-height: 75vh"/>
+      </div>
+    </section>
+
+    <section class="slide">
+      <h2>More results</h2>
+      <p>Non-orthogonal wheels</p>
+      <img src="images/contour-diag.svg"/>
+      <p>Collocation starts to struggle, because required manoever is "stiff"
     </section>
 
     <section class="slide">
