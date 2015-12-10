@@ -73,7 +73,7 @@
       <h2>Dynamics</h2>
         <div style="width: 50%; float: left">
           <div class="slide">
-            <p>Modelled:</p>
+            <h3>Modelled</h3>
             <ul>
               <li>Arbitrary wheel positioning and count</li>
               <li>Body inertial</li>
@@ -81,7 +81,7 @@
             </ul>
           </div>
           <div class="slide">
-            <p>Not modelled</p>
+            <h3>Not modelled</h3>
             <ul>
               <li>Wheel inertial</li>
               <li>Out-of-plane torque</li>
@@ -92,7 +92,7 @@
         </div>
         <div style="width: 50%; float: left">
           <div class="slide">
-            <p>Method</p>
+            <h3>Method</h3>
             <ul>
               <li>
                 <p>Resolve body velocity into wheel velocity</p>
@@ -162,9 +162,16 @@
 
     <section class="slide">
       <h2>More results</h2>
-      <p>Non-orthogonal wheels</p>
-      <img src="images/contour-diag.svg"/>
-      <p>Collocation starts to struggle, because required manoever is "stiff"
+      <div class="slide" style="width: 50%; float: left">
+        <h3>Three wheels</h3>
+        <img src="images/3-wheel.svg"/>
+      </div>
+      <div class="slide" style="width: 50%; float: left">
+        <h3>Non-orthogonal wheels</h3>
+        <img src="images/contour-diag.svg"/>
+        <p>Now a trade-off between max velocity and acceleration</p>
+        <p>Collocation starts to struggle, because required manoever requires a sudden change</p>
+      </div>
     </section>
 
     <section class="slide">
