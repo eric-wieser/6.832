@@ -65,15 +65,20 @@ else if(location.search == '?time') {
 	var robot1 = new Robot(0xff0000);
 	var robot2 = new Robot(0x0000ff);
 
+	var current_step;
+
 	var clock = new THREE.Clock();
 	Trajectory.load('time-comparison.trj',20).then(function(traj) {
 		mgr.scene.add(robot1);
 		mgr.scene.add(robot2);
 
 		mgr.addEventListener('update', function() {
-			var state = traj.eval(clock.getElapsedTime() % (traj.length * 1.5));
+			var state = traj.eval(clock.getElapsedTime() % (traj.length * 1.1));
 			var x1 = state.slice(0, 10);
 			var x2 = state.slice(10, 20);
+
+			robot1.visible = current_step > 2;
+			robot2.visible = current_step > 0;
 
 			robot1.setState(x1[0], x1[1], x1[2], x1.slice(6));
 			robot2.setState(x2[0], x2[1], x2[2], x2.slice(6));
@@ -84,8 +89,8 @@ else if(location.search == '?time') {
 		window.addEventListener("message", function(e) {
 			var d = e.data;
 			if(d.type == 'step') {
-				clock.elapsedTime = 0;
 				clock.start();
+				current_step = d.step;
 			}
 		}, false);
 	}

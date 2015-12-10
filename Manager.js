@@ -27,7 +27,7 @@ Manager = function(container) {
 	this.controls.enableDamping = true;
 	this.controls.dampingFactor = 0.25;
 
-	this.scene = new Scene();
+	this.scene = new THREE.Scene();
 
 	var render = function () {
 		requestAnimationFrame(render);
