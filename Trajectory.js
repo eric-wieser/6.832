@@ -1,5 +1,6 @@
 Trajectory = function(data) {
 	this.data = data;
+	this.length = data.length / 60;
 }
 
 Trajectory.prototype.eval = function(t) {

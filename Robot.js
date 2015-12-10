@@ -21,7 +21,7 @@ var Robot = function() {
 
 		var wheelRef = new THREE.Object3D();
 		wheelRef.rotateOnAxis(new THREE.Vector3(0, 1, 0), theta);
-		wheelRef.translateOnAxis(new THREE.Vector3(0, 0, 1), r);
+		wheelRef.translateOnAxis(new THREE.Vector3(1, 0, 0), r);
 		this.add(wheelRef);
 
 		var wheel = new THREE.Object3D();
@@ -32,7 +32,7 @@ var Robot = function() {
 			new THREE.CylinderGeometry(wr - wwr, wr - wwr, 0.005, wwn*3),
 			new THREE.MeshPhongMaterial({color: 0x808080})
 		);
-		hub.rotateOnAxis(new THREE.Vector3(1, 0, 0), Math.PI / 2);
+		hub.rotateOnAxis(new THREE.Vector3(0, 0, 1), Math.PI / 2);
 		wheel.add(hub);
 		wheel.position.y += wr;
 
@@ -43,6 +43,7 @@ var Robot = function() {
 				new THREE.CylinderGeometry(wwr, wwr, 0.005, 32),
 				new THREE.MeshPhongMaterial({color: 0xc0c0c0})
 			);
+			subwheel.rotateOnAxis(new THREE.Vector3(0, 1, 0), Math.PI / 2);
 			subwheel.rotateOnAxis(new THREE.Vector3(0, 0, 1), phi);
 			subwheel.translateX(wr - wwr);
 			wheel.add(subwheel);
@@ -58,10 +59,10 @@ Robot.prototype.constructor = Robot;
 
 Robot.prototype.setState = function(x, y, theta, wheelAngles) {
 	this.position.x = x;
-	this.position.z = y;
+	this.position.z = -y;
 	this.rotation.y = theta;
 
 	wheelAngles.forEach(function(phi, i) {
-		this.wheels[i].rotation.z = -phi;
+		this.wheels[i].rotation.x = -phi;
 	}, this);
 }
