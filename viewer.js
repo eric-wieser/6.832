@@ -2,113 +2,95 @@ $(function() {
 
 var container = $('#container');
 
-var renderer = new THREE.WebGLRenderer({
-	alpha: true,
-	antialias: true,
-	maxLights: 5
-});
-container.append(renderer.domElement);
+var mgr = new Manager(container);
 
-var camera = new THREE.PerspectiveCamera(75, container.width() / container.height(), 0.01, 5);
-$(window).resize(function() {
-    var w = container.width();
-    var h = container.height();
 
-    renderer.setSize(w, h);
-    camera.aspect = w / h;
-    camera.updateProjectionMatrix();
-});
-$(window).resize();
 
-controls = new THREE.OrbitControls( camera, renderer.domElement );
-//controls.addEventListener( 'change', render ); // add this only if there is no animation loop (requestAnimationFrame)
-controls.enableDamping = true;
-controls.dampingFactor = 0.25;
+if(location.search == '?simple') {
+	mgr.scene = new Scene();
 
-scene = new Scene();
+	robot = new Robot();
+	mgr.scene.add(robot);
 
-// Insert a cube
-robot = new Robot();
-scene.add(robot);
+	var active_traj = null;
+	var next_traj_id = 0;
+	var all_trajs = null;
+	var c = new THREE.Clock();
 
-camera.position.z = 0.25;
-camera.position.y = 0.125;
-camera.position.x = 0.0625;
-camera.lookAt(new THREE.Vector3(0,0,0));
+	Q.all([
+		Trajectory.load('simple2.bin',10),
+		Trajectory.load('simple1.bin',10),
+		Trajectory.load('simple3.bin',10),
+		Trajectory.load('time-comparison.trj',10)
+	]).then(function(trajs) {
+		all_trajs = trajs.slice(0, 3);
+		c.start();
+	});
 
-// var grid = new THREE.GridHelper( 50, 0.1 );
-// grid.material = new THREE.LineBasicMaterial({color: 0x004000});
-// scene.add(grid);
+	mgr.addEventListener('update', function() {
+		if(all_trajs) {
+			var t = c.getElapsedTime();
+			if(active_traj == null) {
+				active_traj = all_trajs[next_traj_id - 1];
+				c.elapsedTime = 0;
+			}
+			else if(Math.floor(t / active_traj.length) != 0) {
+				c.elapsedTime = c.elapsedTime % active_traj.length;
+				active_traj = all_trajs[next_traj_id - 1];
+			}
 
-var plane = (function() {
-	var ms = [
-		new THREE.MeshBasicMaterial({color: 0x008000, side: THREE.DoubleSide, transparent: 1, opacity: 0.25}),
-		new THREE.MeshBasicMaterial({color: 0x102000, side: THREE.DoubleSide, transparent: 1, opacity: 0.25})
-	];
-	n = 8;
-	var g = new THREE.PlaneGeometry(n*0.05, n*0.05, n, n);
-	for(var i = 0; i < g.faces.length; i++) {
-		si = Math.floor(i / 2);
-		g.faces[i].materialIndex = ((si % n)+ Math.floor(si / n)) % 2;
+			if(active_traj) {
+				var x = active_traj.eval(t % active_traj.length);
+				robot.setState(x[0], x[1], x[2], x.slice(6));
+			}
+		}
+	});
+
+	if(window.top != window) {
+		window.addEventListener("message", function(e) {
+			var d = e.data;
+			if(d.type == 'step') {
+				next_traj_id = d.step;
+			}
+		}, false);
 	}
-	return new THREE.Mesh(g, new THREE.MeshFaceMaterial(ms));
-})();
+}
 
-plane.rotateOnAxis(new THREE.Vector3(1, 0, 0), Math.PI / 2);
-plane.translateZ(0.001)
-scene.add( plane );
+else if(location.search == '?time') {
+	mgr.scene = new Scene(20);
 
-var active_traj = null;
-var next_traj_id = 0;
-var all_trajs = null;
+	mgr.camera.position.y = 1;
+	mgr.camera.position.x = 0;
+	mgr.camera.position.z = -0.25;
 
-var c = new THREE.Clock();
-Q.all([
-	Trajectory.load('simple2.bin',10),
-	Trajectory.load('simple1.bin',10),
-	Trajectory.load('simple3.bin',10)
-]).then(function(trajs) {
-	all_trajs = trajs;
-	c.start();
+	var robot1 = new Robot(0xff0000);
+	var robot2 = new Robot(0x0000ff);
 
-});
+	var clock = new THREE.Clock();
+	Trajectory.load('time-comparison.trj',20).then(function(traj) {
+		mgr.scene.add(robot1);
+		mgr.scene.add(robot2);
 
-var render = function () {
-	requestAnimationFrame( render );
+		mgr.addEventListener('update', function() {
+			var state = traj.eval(clock.getElapsedTime() - 2);
+			var x1 = state.slice(0, 10);
+			var x2 = state.slice(10, 20);
 
-	// robot.rotation.x += 0.01;
+			robot1.setState(x1[0], x1[1], x1[2], x1.slice(6));
+			robot2.setState(x2[0], x2[1], x2[2], x2.slice(6));
+		});
+	})
 
-	controls.update();
-
-	if(all_trajs) {
-		var t = c.getElapsedTime();
-		if(active_traj == null) {
-			active_traj = all_trajs[next_traj_id - 1];
-			c.elapsedTime = 0;
-		}
-		else if(Math.floor(t / active_traj.length) != 0) {
-			c.elapsedTime = c.elapsedTime % active_traj.length;
-			active_traj = all_trajs[next_traj_id - 1];
-		}
-
-		if(active_traj) {
-			var x = active_traj.eval(t % active_traj.length);
-			robot.setState(x[0], x[1], x[2], x.slice(6));
-		}
+	if(window.top != window) {
+		window.addEventListener("message", function(e) {
+			var d = e.data;
+			if(d.type == 'step') {
+				clock.elapsedTime = 0;
+				if(d.step == 1) clock.start();
+				else clock.stop();
+			}
+		}, false);
 	}
-
-	renderer.render(scene, camera);
-};
-
-render();
-
-if(window.top != window) {
-	window.addEventListener("message", function(e) {
-		var d = e.data;
-		if(d.type == 'step') {
-			next_traj_id = d.step;
-		}
-	}, false);
 }
 
 });
