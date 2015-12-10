@@ -59,7 +59,7 @@ else if(location.search == '?time') {
 	mgr.scene = new Scene(20);
 
 	mgr.camera.position.y = 1;
-	mgr.camera.position.x = 0;
+	mgr.camera.position.x = -0.25;
 	mgr.camera.position.z = 0.25;
 
 	var robot1 = new Robot(0xff0000);

@@ -8,7 +8,7 @@ var Robot = function(baseColor) {
 	var wwn = 8;
 
 	this.base = new THREE.Mesh(
-		new THREE.CylinderGeometry(r - wwr, r - wwr, 0.005, 32),
+		new THREE.CylinderGeometry(r - wwr, r - wwr, 0.015, 32),
 		new THREE.MeshPhongMaterial({color: baseColor || 0xff0000})
 	);
 	this.base.position.y += wr;
