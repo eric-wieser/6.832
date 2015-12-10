@@ -130,13 +130,27 @@
       <p>Wasted motor power when moving in some directions</p>
       <p>Reorientating takes time</p>
       <p class="slide">Can we do better?</p>
+      <iframe class="slide" src="viewer.html?time" style="position: absolute; top:0; left: 0; width: 100%; height: 100%; z-index: -1"></iframe>
     </section>
 
     <section class="slide">
-      <h2>Results</h2>
-      <div class="slide"></div>
-      <iframe src="viewer.html?time" style="position: absolute; top:0; left: 0; width: 100%; height: 100%; z-index: -1">
-      </iframe>
+      <h2>Approach</h2>
+      <ul>
+        <li>Trajectory optimization (direct collocated)</li>
+        <li>For the na&iuml;ve controller, constrain all intermediate positions to lie along a line</li>
+        <li class="slide">Constant displacement (previous slide)
+          <ul>
+            <li>Constrain start and end positions</li>
+            <li>Minimize time</li>
+          </ul>
+        </li>
+        <li class="slide">Constant time for a given direction
+          <ul>
+            <li>Constrain goal position to lie along line (<code>null(dir)*x = null(dir)*x0</code>)</li>
+            <li>Maximize distance from start location</li>
+          </ul>
+        </li>
+      </ul>
     </section>
 
     <section class="slide">
