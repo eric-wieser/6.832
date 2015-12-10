@@ -71,7 +71,7 @@ else if(location.search == '?time') {
 		mgr.scene.add(robot2);
 
 		mgr.addEventListener('update', function() {
-			var state = traj.eval(clock.getElapsedTime());
+			var state = traj.eval(clock.getElapsedTime() % (traj.length * 1.5));
 			var x1 = state.slice(0, 10);
 			var x2 = state.slice(10, 20);
 
@@ -85,8 +85,7 @@ else if(location.search == '?time') {
 			var d = e.data;
 			if(d.type == 'step') {
 				clock.elapsedTime = 0;
-				if(d.step == 1) clock.start();
-				else clock.stop();
+				clock.start();
 			}
 		}, false);
 	}
