@@ -30,9 +30,9 @@ classdef HolonomicDrive < SecondOrderSystem
 			obj = setInputLimits(obj,-1,1);
 
 			obj = setInputFrame(obj,CoordinateFrame('HolonomicInput',n,'u',...
-				arrayfun(@(i) sprintf('tau%d', i), 1:n, 'Unif', false)));
+				arrayfun(@(i) sprintf('u%d', i), 1:n, 'Unif', false)));
 			obj = setStateFrame(obj,CoordinateFrame('HolonomicState',6,'x',...
-				{'1','2','theta', '1_dot','2_dot', 'theta_dot'}));
+				{'x','y','theta', 'x_dot','y_dot', 'theta_dot'}));
 			obj = setOutputFrame(obj,obj.getStateFrame);
 		end
 
