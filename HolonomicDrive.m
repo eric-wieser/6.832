@@ -131,6 +131,10 @@ classdef HolonomicDrive < SecondOrderSystem
 				toc
 			end
 		end
+		
+		function v = constructVisualizer(obj)
+			v = HolonomicDriveVisualizer(obj);
+		end
 	end
 
 	methods(Static)
