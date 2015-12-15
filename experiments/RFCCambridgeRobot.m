@@ -45,10 +45,10 @@ function obj = RFCCambridgeRobot(thetas)
 		% second column - passive direction
 		wheels(i).driveDir = [-sin(theta); cos(theta)];
 		wheels(i).slipDir = [cos(theta); sin(theta)];
-		wheels(i).b = wb;
+		wheels(i).omegaMax = omega_max;
+		wheels(i).tauMax = tau_max;
 		wheels(i).r = wr;
 	end
 
 	obj = HolonomicDrive(wheels, I, m);
-	obj = setInputLimits(obj, -tau_max, tau_max);
 end

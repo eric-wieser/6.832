@@ -83,7 +83,7 @@ classdef HolonomicDrive < SecondOrderSystem
 			for i = 1:n
 				wheel = obj.wheels(i);
 				% simplified motor dynamics
-				tau = u(i) - wheel.b*speeds(i);
+				tau = wheel.tauMax * (u(i) - speeds(i) / wheel.omegaMax);
 
 				% assign direction to force
 				forceDir = [-wheel.slipDir(2); wheel.slipDir(1)];
@@ -156,7 +156,8 @@ classdef HolonomicDrive < SecondOrderSystem
 				% second column - passive direction
 				wheels(i).driveDir = [-sin(theta); cos(theta)];
 				wheels(i).slipDir = [cos(theta); sin(theta)];
-				wheels(i).b = 1;
+				wheels(i).omegaMax = 1;
+				wheels(i).tauMax = 1;
 				wheels(i).r = 1;
 			end
 
