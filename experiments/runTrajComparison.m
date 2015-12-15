@@ -1,7 +1,7 @@
 function runTrajComparison()
 	megaclear;
 
-	plant = HolonomicDrive.plausibleModel();
+	plant = RFCCambridgeRobot();
 	n = 4;
 
 	% find optimal trajectory
