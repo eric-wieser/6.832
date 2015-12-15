@@ -11,9 +11,7 @@ prog = prog.addStateConstraint(ConstantConstraint(xf), N);
 
 if naive
 	% constrain x(1:3) to be simply interpolation
-	dir = xf(1:3) - x0(1:3);
-	dir = dir / norm(dir);
-	prog = prog.addStateConstraint(LineConstraint(x0, dir), 2:N-1, 1:3);
+	prog = prog.addStateConstraint(LineConstraint(x0(1:3), xf(1:3) - x0(1:3)), 2:N-1, 1:3);
 end
 
 function [h,dh] = finalCost(t,x)
