@@ -86,7 +86,8 @@ classdef HolonomicDrive < SecondOrderSystem
 				tau = u(i) - wheel.b*speeds(i);
 
 				% assign direction to force
-				f = tau / wheel.r * wheel.driveDir;
+				forceDir = [-wheel.slipDir(2); wheel.slipDir(1)];
+				f = tau / wheel.r * forceDir / (forceDir' * wheel.driveDir);
 
 				% combine forces
 				total_force = total_force + f;
