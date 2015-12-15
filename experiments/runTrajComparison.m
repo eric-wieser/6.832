@@ -22,8 +22,8 @@ function runTrajComparison()
 
 	doffset = 0.125*[1;-1;0;0;0;0];
 	offset = 0.25*[-1;-1;0;0;0;0];
-	xtraj = xtraj + offset + doffset;
-	nxtraj = nxtraj + offset - doffset;
+	xtraj = setOutputFrame(xtraj + offset + doffset, plant.getOutputFrame);
+	nxtraj = setOutputFrame(nxtraj + offset - doffset, plant.getOutputFrame);
 	xtrajs = [nxtraj; xtraj];
 
 
@@ -42,7 +42,9 @@ function runTrajComparison()
 		plot(xs(1,:), xs(2,:), 'b');
 		legend({'optimal', 'naive'});
 		
-		mv.draw(t, x)
+		mv.draw(t, x);
+		xlim([-0.5 0.5]);
+		ylim([-0.5 0.5]);
 	end
 	mwf = FunctionHandleVisualizer(mv.getInputFrame, @draw);
 

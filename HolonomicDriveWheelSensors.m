@@ -6,7 +6,7 @@ classdef HolonomicDriveWheelSensors < DrakeSystem
 	end
 
 	methods
-		function obj = HolonomicDriveWheelIntegrator(drive)
+		function obj = HolonomicDriveWheelSensors(drive)
 			n = length(drive.wheels);
 			obj = obj@DrakeSystem(n,0,6,n,false,true);
 			obj.drive = drive;
@@ -16,7 +16,7 @@ classdef HolonomicDriveWheelSensors < DrakeSystem
 				arrayfun(@(i) sprintf('phiu%d', i), 1:n, 'Unif', false)));
 			obj = setOutputFrame(obj, obj.getStateFrame);
 		end
-		
+
 		function x = getInitialState(obj)
 			x = zeros(length(obj.drive.wheels), 1);
 		end
@@ -29,7 +29,7 @@ classdef HolonomicDriveWheelSensors < DrakeSystem
 
 			xd = obj.drive.rotorSpeeds(bodyvel, u(6));
 		end
-		
+
 		function y = output(obj,t,x,u)
 			y = x;
 		end
