@@ -9,7 +9,7 @@ var mgr = new Manager(container);
 if(location.search == '?simple') {
 	mgr.scene = new Scene();
 
-	robot = new Robot();
+	robot = Robot.makeOmni();
 	mgr.scene.add(robot);
 
 	var active_traj = null;
@@ -62,8 +62,8 @@ else if(location.search == '?time') {
 	mgr.camera.position.x = 0.25;
 	mgr.camera.position.z = 0.25;
 
-	var robot1 = new Robot(0xff0000);
-	var robot2 = new Robot(0x0000ff);
+	var robot1 = Robot.makeOmni(0xff0000);
+	var robot2 = Robot.makeOmni(0x0000ff);
 
 	var current_step;
 
