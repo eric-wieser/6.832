@@ -4,7 +4,7 @@ Manager = function(container) {
 	this.renderer = new THREE.WebGLRenderer({
 		alpha: true,
 		antialias: true,
-		maxLights: 5
+		maxLights: 5, preserveDrawingBuffer: true
 	});
 	container.append(this.renderer.domElement);
 
