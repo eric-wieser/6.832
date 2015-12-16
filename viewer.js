@@ -95,5 +95,24 @@ else if(location.search == '?time') {
 		}, false);
 	}
 }
+else if(location.search == '?drives') {
+	mgr.scene = new Scene(20);
+
+	mgr.camera.position.y = 0.45;
+	mgr.camera.position.z = 0;
+	mgr.camera.position.x = 0.20;
+	mgr.camera.fov = 45;
+	mgr.camera.updateProjectionMatrix();
+
+	var robot1 = Robot.makeOmni(0xff0000, 4);
+	var robot2 = Robot.makeOmni(0x0000ff, 3);
+	var robot3 = Robot.makeMecanum(0x00ff00);
+
+	robot1.position.z = -0.25;
+	robot2.position.z = 0.25;
+	mgr.scene.add(robot1);
+	mgr.scene.add(robot2);
+	mgr.scene.add(robot3);
+}
 
 });
