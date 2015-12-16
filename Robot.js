@@ -43,9 +43,10 @@ var Robot = (function() {
 
 		var wangle = Math.PI / 4;
 		var wn = n || 4;
+		var r2 = r / Math.sqrt(2);
 
 		obj.base = new THREE.Mesh(
-			new THREE.BoxGeometry (2*(r - wwr), 0.015, 2*(r + wr)),
+			new THREE.BoxGeometry (2*(r2 + wr), 0.015, 2*(r2 - wwr)),
 			new THREE.MeshPhongMaterial({color: baseColor || 0xff0000})
 		);
 		obj.base.position.y += wr;
@@ -54,9 +55,9 @@ var Robot = (function() {
 		for(var i = 0; i < 2; i++) {
 			{
 				var wheelRef = new THREE.Object3D();
-				wheelRef.rotateOnAxis(new THREE.Vector3(0, 1, 0), Math.PI*i);
-				wheelRef.translateOnAxis(new THREE.Vector3(1, 0, 0), r);
-				wheelRef.translateOnAxis(new THREE.Vector3(0, 0, 1), r);
+				wheelRef.rotateOnAxis(new THREE.Vector3(0, 1, 0), Math.PI*(i+0.5));
+				wheelRef.translateOnAxis(new THREE.Vector3(1, 0, 0), r2);
+				wheelRef.translateOnAxis(new THREE.Vector3(0, 0, 1), r2);
 				obj.add(wheelRef);
 
 				var wheel = Robot.makeWheel(wangle);
@@ -65,9 +66,9 @@ var Robot = (function() {
 			}
 			{
 				var wheelRef = new THREE.Object3D();
-				wheelRef.rotateOnAxis(new THREE.Vector3(0, 1, 0), Math.PI*i);
-				wheelRef.translateOnAxis(new THREE.Vector3(1, 0, 0), r);
-				wheelRef.translateOnAxis(new THREE.Vector3(0, 0, 1), -r);
+				wheelRef.rotateOnAxis(new THREE.Vector3(0, 1, 0), Math.PI*(i+0.5));
+				wheelRef.translateOnAxis(new THREE.Vector3(1, 0, 0), r2);
+				wheelRef.translateOnAxis(new THREE.Vector3(0, 0, 1), -r2);
 				obj.add(wheelRef);
 
 				var wheel = Robot.makeWheel(-wangle);
